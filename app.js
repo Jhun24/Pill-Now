@@ -35,7 +35,7 @@ var user = mongoose.Schema({
     password:String,
     token:String,
     age:String,
-    work:String,
+    sex:String,
 });
 
 var userModel = mongoose.model('userModel',user);
