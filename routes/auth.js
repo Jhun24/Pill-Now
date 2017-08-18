@@ -13,7 +13,9 @@ function auth(app,randomstring,userModel) {
         userModel.find({"id": id, "password": password}, (err, model) => {
             if (err) throw err;
             if (model.length == 0) {
-                res.send(404);
+                res.send({
+                    "status":404
+                });
             }
             else {
                 res.send({
@@ -44,7 +46,9 @@ function auth(app,randomstring,userModel) {
                 });
             }
             else {
-                res.send(401);
+                res.send({
+                    "status":401
+                });
             }
         });
     });

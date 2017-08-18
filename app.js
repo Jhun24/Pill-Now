@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var randomstring = require('randomstring');
 var mongoose = require('mongoose');
-
+var request = require('request');
 
 var app = express();
 
@@ -38,9 +38,22 @@ var user = mongoose.Schema({
     sex:String,
 });
 
+var medicine = mongoose.Schema({
+    name:String,
+    use:String,
+    save:String,
+    ingridient:String,
+    notice:String,
+    number:String,
+    division:String,
+    img:String
+
+})
+
 var userModel = mongoose.model('userModel',user);
 
 var auth = require('./routes/auth')(app,randomstring,userModel);
+var location = require('./routes/location')(app,request);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
