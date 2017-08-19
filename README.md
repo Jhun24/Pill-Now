@@ -53,13 +53,13 @@
 
 > Response
 
-> Success 
+>> Success 
 
     status : 200
 
     token : 유저 토큰
 
-> Fail
+>> Fail
 
     status : 404
 
@@ -79,13 +79,13 @@
 
 > Response
 
-> Success 
+>> Success 
 
     status : 200
 
     token : 유저 토큰
 
-> Fail
+>> Fail
 
     status : 401
 
@@ -101,7 +101,7 @@
 
 > Response
 
-> Success
+>> Success
 
      주변 병원 위치 JSON
 
@@ -121,23 +121,23 @@
     
 > Response
 
-> Success
+>> Success
 
     status : 200
     
     userData : 유저 약 object (medicine Schema 참고)
 
-> Fail : PID Number 오류
+>> Fail : PID Number 오류
 
     status : 404
     message : PID number undefinded
 
-> Fail : token 오류
+>> Fail : token 오류
 
     status : 404
     message : token undefinded
 
-> Fail : PID Number 길이 오류
+>> Fail : PID Number 길이 오류
 
     status : 404
     message : PID Number length is too short
@@ -150,14 +150,36 @@
 
 > Response
 
-> Success
+>> Success
 
     status : 200
     userList : 유저 약 종류(userMedicine Schema 참고)
     
-> Fail
+>> Fail
     
     stauts:404
+# /alarm
+
+### GET : /alarm/setting?token=유저 토큰&name=약 이름&time=약 먹을 시간
+
+> Require
+
+    token : 유저 토큰
+    
+    name : 약 이름
+    
+    time : 약 먹을 시간 (시간만 보내주세요 EX : 9 , EX : 23)
+
+> Response
+
+>> Success
+
+    status : 200
+    
+>> Fail 
+    
+    status : 409
+
 
 # /push
 

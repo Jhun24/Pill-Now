@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var randomstring = require('randomstring');
 var mongoose = require('mongoose');
 var request = require('request');
+var FCM = require('fcm-push');
 
 var app = express();
 
@@ -54,13 +55,22 @@ var userMedicine = mongoose.Schema({
     number:String
 });
 
+var alarm = mongoose.Schema({
+    token:String,
+    name:String,
+    time:String
+});
+
 var userModel = mongoose.model('userModel',user);
 var medicineModel = mongoose.model('medicineModel',medicine);
 var userMedicineModel = mongoose.model('userMedicineModel',userMedicine);
+var alarmModel = mongoose.model('alarmModel',alarm);
 
 var auth = require('./routes/auth')(app,randomstring,userModel);
 var location = require('./routes/location')(app,request);
 var medicine = require('./routes/medicine')(app,request,medicineModel,userMedicineModel);
+var push = require('./routes/push')(app,FCM,alarmModel);
+var alarm = require('./routes/alarm')(app,alarmModel);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
