@@ -5,85 +5,125 @@ module.exports = medicine;
 
 function medicine(app,request,medicineModel,userMedicineModel){
     "use strict";
-    app.get('/parse/getData',(req,res)=>{
+    app.get('/medicine/getData',(req,res)=>{
+        console.log("query Success");
         var url = "http://terms.naver.com/medicineSearch.nhn?mode=nameSearch&query=";
         var medicNum = req.query.medicNum;
-
+        var token = req.query.token;
         var resultUrl = url+medicNum;
 
-        var medicineName;
-        var medicineDisplayUrl;
+        var checkTokenIf = typeof(token);
+        console.log(checkTokenIf);
 
-        var division;
-        var use;
-        var notice;
-        var save;
-        var ingridient;
+        if(checkTokenIf == "undefined"){
+            var checkToken = false;
+        }
+        else{
+            var checkToken = true;
+        }
 
-        medicineModel.find({"number":medicNum},(err,model)=>{
-            if(err) throw err;
-            console.log(model[0]);
-            if(model[0] == null){
-                console.log("Save model");
-                request(resultUrl,(err,response,html)=>{
-                    if(err) throw err;
+        request(resultUrl,(err,response,html)=> {
+            if (err) throw err;
 
-                    var splitName = html.split("<dt>");
-                    var name = splitName[1].split("</a>");
-
-                    medicineName = name[0].split("<strong>")[1].split("</strong>")[0];
-                    var naverUrl = name[0].split("<a href=\"")[1].split("\">")[0];
-                    medicineDisplayUrl = "http://terms.naver.com/"+naverUrl;
-
-                    console.log(medicineDisplayUrl);
-
-                    request(medicineDisplayUrl,(error,respon,code)=>{
-
-                        if(error) throw error;
-
-                        var test = code.split("<tr>");
-                        division = test[2].split("</span>")[1].split("\">")[1].split("</td>")[0];
-                        var setUse = test[5].split("<p class=\"txt\">");
-                        use = setUse[5].split("<h3")[0];
-                        use = use.replace("</p>","").replace(/<br>/gi,"\n");
-
-                        var notice = setUse[6].split("<dl>")[0].split("</p>")[0].replace(/<br>/gi,"\n");
-                        ingridient = setUse[2].split("</p>")[0];
-                        save = setUse[3].split("</p>")[0];
-
-                        var img = test[0].split("<img id=\"innerImage0\" class=\"lazyLoadImage\" src=\"http://static.naver.net/terms/terms/img/e.gif\" data-src=\"")[1].split("\"")[0];
-                        var result = new Array();
-                        result["name"] = medicineName;
-                        result["number"] = medicNum;
-                        result["division"] = division;
-                        result["use"] = use;
-                        result["notice"] = notice;
-                        result["save"] = save;
-                        result["ingridient"] = ingridient;
-                        console.log(result);
-
-                        var medicDataSave = new medicineModel({
-                            "name":result["name"],
-                            "number":result["number"],
-                            "division":result["division"],
-                            "notice":result["notice"],
-                            "ingridient":result["ingridient"],
-                            "use":result["use"],
-                            "save":result["save"],
-                            "img":img
-                        });
-                        console.log(test[2]);
-                        medicDataSave.save((err,model)=>{
-                            if(err) throw err;
-                            console.log(model);
-                            res.send(model);
-                        });
-                    });
+            var splitName = html.split("<dt>");
+            var result = splitName[0].split("<strong class=\"title\">");
+            if(result[4].indexOf("선택한 조건에 맞는 의약품 검색결과가 없습니다.") != -1){
+                res.send({
+                    "statuts":404,
+                    "message":"PID number undefinded"
                 });
             }
             else{
-                console.log("Load Model")
-                res.send(model[0]);
+                var parseUrl = result[4].split("<a href=\"/entry")[1].split("\">")[0];
+                var getDataUrl = "http://terms.naver.com/entry"+parseUrl;
+
+                request(getDataUrl,(error,respon,code)=>{
+
+                    if(error) throw error;
+                    var parseNumber = code.split("<tr>")[5].split("<td class=\"\">")[1].split("</td>")[0];
+
+                    var parseDivision = code.split("<tr>")[2].split("<td class=\"\">")[1].split("</td>")[0];
+
+                    var parseSave = code.split("<p class=\"txt\">")[3].split("</p>")[0];
+
+                    var parseIngridient = code.split("<p class=\"txt\">")[2].split("</p>")[0];
+
+                    var parseUse = code.split("<p class=\"txt\">")[5].split("</p>")[0];
+                    var deleteUse = parseUse.split("<br>")[0];
+                    parseUse = parseUse.replace(deleteUse,"").replace("<br>","").replace("<br>","");
+
+                    var parseNotice = code.split("<p class=\"txt\">")[6].split("</p>")[0];
+                    var deleteNotice = parseNotice.split("<br>")[0];
+                    parseNotice = parseNotice.replace(deleteNotice,"").replace("<br>","").replace("<br>","");
+
+                    var parseName = code.split("<h2 class=\"headword\">")[1].split("</h2>")[0];
+
+                    var parseImg = code.split("<img id=\"innerImage0\" class=\"lazyLoadImage\" src=\"")[1].split("data-src=\"")[1].split("\"")[0];
+
+                    var result = new Array();
+                    result["name"] = parseName;
+                    result["number"] = parseNumber;
+                    result["division"] = parseDivision;
+                    result["use"] = parseUse;
+                    result["notice"] = parseNotice;
+                    result["save"] = parseSave;
+                    result["ingridient"] = parseIngridient;
+                    result["img"] = parseImg;
+
+                    var medicDataSave = new medicineModel({
+                        "name":result["name"],
+                        "number":result["number"],
+                        "division":result["division"],
+                        "notice":result["notice"],
+                        "ingridient":result["ingridient"],
+                        "use":result["use"],
+                        "saveMedic":result["save"],
+                        "img":result["img"]
+                    });
+
+                    userMedicineModel.find({"token":token,"number":result["number"]},(err,model)=>{
+                        if(err) throw err;
+                        if(model.length == 0){
+
+                            var saveUserMedicineModel = new userMedicineModel({
+                                "token":token,
+                                "number":result["number"]
+                            });
+
+                            saveUserMedicineModel.save(saveUserMedicineModel,(error,m)=>{
+                                if(error) throw error;
+                            });
+
+                        }
+
+                        if(checkToken == false){
+                            res.send({
+                                "status":404,
+                                "message":"token undefinded"
+                            })
+                        }
+                        else{
+                            medicineModel.find({"number":result["number"]},(err,model)=>{
+                                if(err) throw err;
+                                if(model.length == 0){
+                                    medicDataSave.save((err,m)=>{
+                                        if(err) throw err;
+                                        res.send({
+                                            "status":200,
+                                            "userData":m
+                                        })
+                                    });
+                                }
+                                else{
+                                    res.send({
+                                        "status":200,
+                                        "userData":model
+                                    })
+                                }
+                            });
+                        }
+                    });
+                });
             }
         });
     });

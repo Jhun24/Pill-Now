@@ -26,11 +26,13 @@
 
 - notice : 주의 사항
 
-- save : 저장용기
+- saveMedic : 저장용기
 
 - ingridient : 재료
 
-- name : 이름
+- name : 약 이름
+
+- img : 약 사진 URL
 
 # /Auth 
 

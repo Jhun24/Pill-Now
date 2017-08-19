@@ -41,19 +41,26 @@ var user = mongoose.Schema({
 var medicine = mongoose.Schema({
     name:String,
     use:String,
-    save:String,
+    saveMedic:String,
     ingridient:String,
     notice:String,
     number:String,
     division:String,
     img:String
+});
 
-})
+var userMedicine = mongoose.Schema({
+    name:String,
+    number:String
+});
 
 var userModel = mongoose.model('userModel',user);
+var medicineModel = mongoose.model('medicineModel',medicine);
+var userMedicineModel = mongoose.model('userMedicineModel',userMedicine);
 
 var auth = require('./routes/auth')(app,randomstring,userModel);
 var location = require('./routes/location')(app,request);
+var medicine = require('./routes/medicine')(app,request,medicineModel,userMedicineModel);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
