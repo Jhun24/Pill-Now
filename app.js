@@ -68,7 +68,7 @@ var alarmModel = mongoose.model('alarmModel',alarm);
 
 var auth = require('./routes/auth')(app,randomstring,userModel);
 var location = require('./routes/location')(app,request);
-var medicine = require('./routes/medicine')(app,request,medicineModel,userMedicineModel);
+var medicine = require('./routes/medicine')(app,request,medicineModel,userMedicineModel,alarmModel);
 var push = require('./routes/push')(app,FCM,alarmModel);
 var alarm = require('./routes/alarm')(app,alarmModel);
 

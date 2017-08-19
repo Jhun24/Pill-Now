@@ -3,7 +3,7 @@
  */
 module.exports = medicine;
 
-function medicine(app,request,medicineModel,userMedicineModel){
+function medicine(app,request,medicineModel,userMedicineModel,alarmModel){
     "use strict";
     app.get('/medicine/getData',(req,res)=>{
         console.log("query Success");
@@ -154,6 +154,28 @@ function medicine(app,request,medicineModel,userMedicineModel){
                     "userList":model
                 });
             }
+        });
+    });
+
+    app.post('/medicine/delete',(req,res)=>{
+        var token = req.body.token;
+        var name = req.body.name;
+
+        userMedicineModel.remove({"token":token,"name":name},(err,model)=>{
+            if(err){
+                throw err;
+                res.send(401);
+            }
+
+            alarmModel.remove({"token":token,"name":name},(err,model)=>{
+                if(err){
+                    throw err;
+                    res.send(401);
+                }
+
+                res.send(200);
+            });
+
         });
     });
 }

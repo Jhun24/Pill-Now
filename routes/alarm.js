@@ -10,28 +10,37 @@ function alarm(app , alarmModel){
         var name = req.query.name;
         var time = req.query.time;
 
-        alarmModel.find({"token":token,"name":name,"time":time},(err,model)=>{
-            if(err) throw err;
-            if(model.length == 0){
-                var saveAlarmModel = new alarmModel({
-                    "token":token,
-                    "name":name,
-                    "time":time
-                });
+        if(Number(time) > 24){
+            res.send({
+                "stauts":403,
+                "message":"Require time error"
+            })
+        }
+        else{
+            alarmModel.find({"token":token,"name":name,"time":time},(err,model)=>{
+                if(err) throw err;
+                if(model.length == 0){
+                    var saveAlarmModel = new alarmModel({
+                        "token":token,
+                        "name":name,
+                        "time":time
+                    });
 
-                saveAlarmModel.save((error,m)=>{
-                   if(error) throw error;
-                   res.send({
-                       "status":200
-                   });
-                });
-            }
-            else{
-                res.send({
-                    "status":409
-                });
-            }
-        });
+                    saveAlarmModel.save((error,m)=>{
+                        if(error) throw error;
+                        res.send({
+                            "status":200
+                        });
+                    });
+                }
+                else{
+                    res.send({
+                        "status":409,
+                        "message":"Already Have"
+                    });
+                }
+            });
+        }
     });
 
 }

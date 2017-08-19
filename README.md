@@ -158,6 +158,25 @@
 >> Fail
     
     stauts:404
+    
+### POST : /medicine/delete
+
+> Require
+    
+    token : 유저 토큰
+    
+    name : 약 이름
+    
+> Response
+
+>> Success
+    
+    stauts : 200
+    
+>> Fail
+
+    stauts : 401
+
 # /alarm
 
 ### GET : /alarm/setting?token=유저 토큰&name=약 이름&time=약 먹을 시간
@@ -176,11 +195,32 @@
 
     status : 200
     
->> Fail 
+>> Fail : overlap
     
     status : 409
+    message : Already Have
 
+>> Fail : time Error
+
+    status : 403,
+    message : Require time error
 
 # /push
 
-> 준비중
+### GET : /push
+
+> Require
+    
+    token : 유저 토큰
+    
+    fcm : 안드로이드 클라이언트 FCM 토큰
+
+> Response
+
+>> Success
+
+    일치하는 시간이 있다면 fcm 전송
+    
+>> Fail
+    
+    아무일도 일어나지 않았다

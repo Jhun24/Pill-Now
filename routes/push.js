@@ -22,23 +22,23 @@ function push(app,FCM,alarmModel){
             for(var i = 0; i<model.length; i++){
                 if(model[i]["time"] == time){
                     var fcmTitle = model[i]["name"]+" 먹을시간입니다!";
+                    var message = {
+                        to : fcmToken,
+                        priority:'high',
+                        notification:{
+                            title:"약 먹을시간입니다!",
+                            body:fcmTitle
+                        }
+                    };
+                    fcm.send(message,(err,result)=>{
+                        if(err) throw err;
+                        else{
+                            console.log("fcm send success  :  "+result);
+                        }
+                    });
                 }
             }
         });
-        var message = {
-            to : fcmToken,
-            priority:'high',
-            notification:{
-                title:"약 먹을시간입니다!",
-                body:fcmTitle
-            }
-        };
 
-        fcm.send(message,(err,result)=>{
-            if(err) throw err;
-            else{
-                console.log("fcm send success  :  "+result);
-            }
-        });
     });
 }
