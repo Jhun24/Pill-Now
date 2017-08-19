@@ -4,100 +4,161 @@
 
 ### User Schema
 
-- name : 유저 이름
+    name : 유저 이름
 
-- id : 유저 ID
+    id : 유저 ID
 
-- password : 유저 비밀번호
+    password : 유저 비밀번호
 
-- sex : 유저 성별
+    sex : 유저 성별
 
-- age : 유저 나이
+    age : 유저 나이
 
-- token : 유저 토큰
+    token : 유저 토큰
 
 ### medicine Schema
 
-- number : 약 코드
+    number : 약 코드
 
-- division : 전문 의약품 OR 일반 의약품
+    division : 전문 의약품 OR 일반 의약품
 
-- use : 사용 방법
+    use : 사용 방법
 
-- notice : 주의 사항
+    notice : 주의 사항
 
-- saveMedic : 저장용기
+    saveMedic : 저장용기
 
-- ingridient : 재료
+    ingridient : 재료
 
-- name : 약 이름
+    name : 약 이름
 
-- img : 약 사진 URL
+    img : 약 사진 URL
+
+### userMedicine Schema
+
+    number : 약 코드
+
+    token : 사용자 토큰
+
 
 # /Auth 
 
 ### POST : /auth/login
 
->> Require 
+> Require 
 
-> id : 유저 ID
+    id : 유저 ID
 
-> password : 유저 비밀번호
+    password : 유저 비밀번호
 
->> Response
+> Response
 
->> Success 
+> Success 
 
-> status : 200
+    status : 200
 
-> token : 유저 토큰
+    token : 유저 토큰
 
->> Fail
+> Fail
 
-> status : 404
+    status : 404
 
 ### POST : /auth/signup
 
->> Require
+> Require
 
-> id : 유저 ID
+    id : 유저 ID
 
-> password : 유저 비밀번호
+    password : 유저 비밀번호
 
-> age : 유저 나이
+    age : 유저 나이
 
-> sex : 유저 성별
+    sex : 유저 성별
 
-> name : 유저 이름
+    name : 유저 이름
 
->> Response
+> Response
 
->> Success 
+> Success 
 
-> status : 200
+    status : 200
 
-> token : 유저 토큰
+    token : 유저 토큰
 
->> Fail
+> Fail
 
-> status : 401
+    status : 401
 
 # /location
 
-### GET : /location
+### GET : /location?latitude=위도&longitude=경도
 
->> Require
+> Require
 
-> latitude : 위도
+    latitude : 위도
 
-> longitude : 경도
+    longitude : 경도
 
->> Response
+> Response
 
->> Success
+> Success
 
-> 주변 병원 위치 JSON
+     주변 병원 위치 JSON
 
 >> Fail
 
-> 비어있는 JSON
+    Null Json
+
+# /medicine
+
+### GET : /medicine/getData?medicNum=PID 번호&token=유저 토큰
+
+> Require
+
+    medicNum : 약의 PID 번호
+    
+    token : 유저 토큰
+    
+> Response
+
+> Success
+
+    status : 200
+    
+    userData : 유저 약 object (medicine Schema 참고)
+
+> Fail : PID Number 오류
+
+    status : 404
+    message : PID number undefinded
+
+> Fail : token 오류
+
+    status : 404
+    message : token undefinded
+
+> Fail : PID Number 길이 오류
+
+    status : 404
+    message : PID Number length is too short
+    
+### GET : /medicine/userList?token=유저 토큰
+
+> Require
+    
+    token : 유저 토큰
+
+> Response
+
+> Success
+
+    status : 200
+    userList : 유저 약 종류(userMedicine Schema 참고)
+    
+> Fail
+    
+    stauts:404
+
+# /push
+
+> 준비중
