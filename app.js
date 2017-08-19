@@ -52,7 +52,8 @@ var medicine = mongoose.Schema({
 
 var userMedicine = mongoose.Schema({
     name:String,
-    number:String
+    number:String,
+    token:String
 });
 
 var alarm = mongoose.Schema({

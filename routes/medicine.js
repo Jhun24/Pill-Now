@@ -25,14 +25,14 @@ function medicine(app,request,medicineModel,userMedicineModel,alarmModel){
         userMedicineModel.find({"token":token,"number":medicNum},(err,model)=>{
             if(err) throw err;
             if(model.length == 0){
-
                 var saveUserMedicineModel = new userMedicineModel({
                     "token":token,
                     "number":medicNum
                 });
 
-                saveUserMedicineModel.save(saveUserMedicineModel,(error,m)=>{
+                saveUserMedicineModel.save((error,m)=>{
                     if(error) throw error;
+                    console.log(m);
                 });
 
             }
@@ -44,7 +44,7 @@ function medicine(app,request,medicineModel,userMedicineModel,alarmModel){
                 });
             }
             else{
-                if(medicNum.length != 10){
+                if(medicNum.length != 9){
                     res.send({
                         "status":404,
                         "message":"PID Number length is too short"
@@ -159,15 +159,15 @@ function medicine(app,request,medicineModel,userMedicineModel,alarmModel){
 
     app.post('/medicine/delete',(req,res)=>{
         var token = req.body.token;
-        var name = req.body.name;
-
-        userMedicineModel.remove({"token":token,"name":name},(err,model)=>{
+        var number = req.body.number;
+        console.log("query on")
+        userMedicineModel.remove({"token":token,"number":number},(err,model)=>{
             if(err){
                 throw err;
                 res.send(401);
             }
 
-            alarmModel.remove({"token":token,"name":name},(err,model)=>{
+            alarmModel.remove({"token":token,"name":number},(err,model)=>{
                 if(err){
                     throw err;
                     res.send(401);

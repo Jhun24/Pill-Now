@@ -165,7 +165,7 @@
     
     token : 유저 토큰
     
-    name : 약 이름
+    number : 약 PID 번호
     
 > Response
 
