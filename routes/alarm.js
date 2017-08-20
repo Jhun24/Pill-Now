@@ -43,4 +43,22 @@ function alarm(app , alarmModel){
         }
     });
 
+    app.get('/alarm/user',(req,res)=>{
+        var token = req.query.token;
+
+        alarmModel.find({"token":token},(err,model)=>{
+            if(err) throw err;
+            if(model.length == 0){
+                res.send({
+                    "status":404
+                });
+            }
+            else{
+                res.send({
+                    "status":200,
+                    "list":model
+                });
+            }
+        });
+    });
 }

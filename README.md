@@ -41,6 +41,15 @@
     token : 사용자 토큰
 
 
+### alarm Schema
+
+    token : 토큰
+    
+    name : 약 이름
+    
+    time : 시간 ( EX : 9 , EX : 14)
+
+
 # /Auth 
 
 ### POST : /auth/login
@@ -194,16 +203,27 @@
 >> Success
 
     status : 200
+ 
+### GET : /alarm/user
+
+
+> Require
+
+    token : 유저 토큰
     
+
+> Response
+
+>> Success
+
+    status : 200
+    
+    list : 유저 알람 리스트 (alarmModel 참고
+
 >> Fail : overlap
     
-    status : 409
-    message : Already Have
+    status : 404
 
->> Fail : time Error
-
-    status : 403,
-    message : Require time error
 
 # /push
 
@@ -224,3 +244,4 @@
 >> Fail
     
     아무일도 일어나지 않았다
+    
