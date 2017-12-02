@@ -1,4 +1,4 @@
-#Pill-Now
+
 
 # Server Schema
 
